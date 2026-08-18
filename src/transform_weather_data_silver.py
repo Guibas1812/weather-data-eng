@@ -47,13 +47,15 @@ for key in weather_keys:
             daily_max_temperature=("temperature_2m", "max"),
             daily_min_temperature=("temperature_2m", "min"),
             daily_rain=("rain", "sum"),
-            daily_avg_uv=("uv_index", "max"),
+            daily_avg_uv=("uv_index", "mean"),
         ).reset_index()
-
+    
     all_daily_dfs.append(daily_df)
+
 
 #print (all_daily_dfs)
 silver_weather_df = pd.concat(all_daily_dfs, ignore_index=True)
+silver_weather_df["daily_sunshine_hours"] = silver_weather_df["daily_sunshine_seconds"] / 3600
 
 s3.put_object(
     Bucket=bucket_name,
