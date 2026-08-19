@@ -29,6 +29,7 @@ cities_df = pd.read_csv(s3.get_object(
 for i in range(5): #len(cities_df) #iterate through the cities in the dataframe
 
     city_name = cities_df['city'][i]
+    city_name = city_name.replace(" ", "_").lower()
     lat = cities_df['lat'][i]
     lon= cities_df['lng'][i]
 
