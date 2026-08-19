@@ -13,7 +13,7 @@ bucket_name = "weather-data-eng" #bucket_name
 # get cities from csv
 cities_df = pd.read_csv(s3.get_object(
             Bucket=bucket_name,
-            Key="bronze/reference/cities.csv")['Body'])
+            Key="silver/reference/cities.csv")['Body'])
 
 for city in cities_df['city'].head(5): #iterate through the cities in the dataframe
 
