@@ -79,18 +79,18 @@ month_pd = month_weather_df.toPandas() # loaded to pandas to avoid S3A connector
 
 s3.put_object(
     Bucket=bucket_name,
-    Key="gold/weather/fact_weather_monthly_by_year.csv",
+    Key="gold/fact_weather_monthly_by_year.csv",
     Body=month_year_pd.to_csv(index=False)
 )
 
-print(f"Wrote {len(month_year_pd)} rows to gold/weather/fact_weather_monthly_by_year.csv")
+print(f"Wrote {len(month_year_pd)} rows to gold/fact_weather_monthly_by_year.csv")
 
 s3.put_object(
     Bucket=bucket_name,
-    Key="gold/weather/fact_weather_l3y_avg.csv",
+    Key="gold/fact_weather_l3y_avg.csv",
     Body=month_pd.to_csv(index=False)
 )
 
-print(f"Wrote {len(month_pd)} rows to gold/weather/fact_weather_l3y_avg.csv")
+print(f"Wrote {len(month_pd)} rows to gold/fact_weather_l3y_avg.csv")
 
 spark.stop()
