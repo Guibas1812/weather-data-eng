@@ -40,7 +40,7 @@ for i in range(5): #len(cities_df) #iterate through the cities in the dataframe
     'lon' : lon ,
     'radius' : radius,
     'limit' : 50,
-    'rate' : 2
+    'rate' : 2,
     }
 
     try:
