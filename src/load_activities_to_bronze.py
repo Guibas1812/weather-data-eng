@@ -26,7 +26,7 @@ cities_df = pd.read_csv(s3.get_object(
             Key="silver/reference/cities.csv")['Body'])
 
 
-for i in range(5): #len(cities_df) #iterate through the cities in the dataframe
+for i in range(len(cities_df)): #iterate through the cities in the dataframe
 
     city_name = cities_df['city'][i]
     city_name = city_name.replace(" ", "_").lower()
