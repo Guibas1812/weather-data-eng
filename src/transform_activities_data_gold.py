@@ -8,7 +8,7 @@ from pyspark.sql.window import Window
 
 """
 Used PySpark for the transformation layer for demonstration purposes; 
-Note that at this project's data volume, pandas would also be sufficient — Spark's value would scale with more cities/longer history
+Note that at this project's data volume, pandas would also be sufficient - Spark's value would scale with more cities/longer history
 
 """
 
@@ -23,13 +23,11 @@ silver_pd = pd.read_csv(response["Body"])
 
 silver_activities_df = spark.createDataFrame(silver_pd)
 
-# silver_activities_df.orderBy(["city", "rate"], ascending=[True, False]).show()
-
 # put rounded lat/lon columns to use for deduplication
 silver_activities_df = silver_activities_df.withColumn('lat_rounded', F.round('lat', 3))
 silver_activities_df = silver_activities_df.withColumn('lon_rounded', F.round('lon', 3))
 
-# Deduplicate by city and rounded lat/lon, keeping the highest rated attraction for each location
+# deduplicate by city and rounded lat/lon, keeping the highest rated attraction for each location
 gold_attractions_df = silver_activities_df.withColumn(
     'row_number',
     F.row_number().over(Window.partitionBy('city','lat_rounded','lon_rounded').orderBy(F.desc('rate')))).filter('row_number = 1').drop('lat_rounded', 'lon_rounded', 'row_number').orderBy('city', F.desc('rate'))
@@ -47,17 +45,17 @@ exploded_df = gold_attractions_df.withColumn(
 )
 exploded_df = exploded_df.withColumn("kind", F.trim(F.col("kind")))
 
-# Get the top-level categories from the kinds column
+# get the top-level categories from the kinds column
 exploded_df = exploded_df.withColumn("kind", F.trim(F.col("kind")))
 
-# Top-level categories to keep (belong to kinds hierarchy)
+# top-level categories to keep (belong to kinds hierarchy)
 top_level_kinds = [
     "tourist_facilities", "sport", "religion", "other", "natural",
     "industrial_facilities", "historic", "cultural", "architecture",
     "amusements", "adult", "accomodations"
 ]
 
-# Keep only rows where kind is one of the top-level categories
+# keep only rows where kind is one of the top-level categories
 filtered_df = exploded_df.filter(F.col("kind").isin(top_level_kinds))
 
 gold_activities_by_category_df = filtered_df.select(
@@ -66,7 +64,7 @@ gold_activities_by_category_df = filtered_df.select(
 #----- activity by category gold created -> pass to pandas for later upload to S3
 gold_activities_by_category_pd = gold_activities_by_category_df.toPandas()
 
-# Aggregate: distinct attraction count per city per category
+# aggregate: distinct attraction count per city per category
 gold_activity_counts_df = (
     filtered_df
     .groupBy("city", "kind")

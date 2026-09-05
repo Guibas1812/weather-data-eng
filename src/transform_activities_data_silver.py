@@ -16,9 +16,7 @@ all_rows = []
 
 for obj in response.get("Contents", []):
     if obj["Key"].endswith(".json"):  # check if the file is a JSON file
-        # print(obj["Key"])  # prints the key of each JSON file in the list
         activity_keys.append(obj["Key"])
-        #print(activities_keys)
     else:
         print(f"Skipping non-JSON file: {obj['Key']}")
 
@@ -28,8 +26,6 @@ for key in activity_keys:
     city_name = key.split("/")[2]
 
     for feature in activities_data["features"]:
-        #print(feature['properties']['name'])
-
         all_rows.append({
             'id' : feature['properties']['xid'] ,
             'city' : city_name ,

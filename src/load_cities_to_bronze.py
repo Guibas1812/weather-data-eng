@@ -9,8 +9,7 @@ s3 = boto3.client("s3")
 bucket_name = "weather-data-eng" #bucket_name
 
 project_root = Path(__file__).resolve().parent.parent #get the root of the project
-cities_df = pd.read_csv(project_root / "data" / "simplemaps_worldcities_basicv1.91.2" / "worldcities.csv") #check if correctly assigned
-#print(cities_df.head())
+cities_df = pd.read_csv(project_root / "data" / "simplemaps_worldcities_basicv1.91.2" / "worldcities.csv") # check if correctly assigned
 
 s3.put_object(
     Bucket=bucket_name,

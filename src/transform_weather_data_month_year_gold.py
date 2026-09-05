@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 
 """
 Used PySpark for the transformation layer for demonstration purposes; 
-Note that at this project's data volume, pandas would also be sufficient — Spark's value would scale with more cities/longer history
+Note that at this project's data volume, pandas would also be sufficient - Spark's value would scale with more cities/longer history
 
 """
 def transform_weather_to_gold():
@@ -31,8 +31,6 @@ def transform_weather_to_gold():
     three_years_ago = (datetime.today() - relativedelta(years=3)).strftime("%Y-%m-%d")
     silver_weather_df = silver_weather_df.filter(F.col("date") >= three_years_ago)
 
-    #silver_weather_df.show(5)
-
     # aggregate daily data to month_year level
     month_year_weather_df = silver_weather_df.groupBy("city","month_year").agg({
         "daily_sunshine_hours": "mean",
@@ -43,8 +41,6 @@ def transform_weather_to_gold():
         "daily_max_uv": "mean"
         })
 
-    #month_year_weather_df.show(5)
-
     month_year_weather_df = (
         month_year_weather_df
         .withColumnRenamed("avg(daily_sunshine_hours)", "avg_daily_sunshine_hours")
@@ -54,8 +50,6 @@ def transform_weather_to_gold():
         .withColumnRenamed("avg(daily_rain)", "avg_daily_rainfall_mm")
         .withColumnRenamed("avg(daily_max_uv)", "avg_peak_uv_index")
     )
-
-    #month_year_weather_df.show(5)
 
     # aggregate daily data to month_year level
     month_weather_df = silver_weather_df.groupBy("city","month").agg({
@@ -77,8 +71,6 @@ def transform_weather_to_gold():
         .withColumnRenamed("avg(daily_rain)", "avg_daily_rainfall_mm")
         .withColumnRenamed("avg(daily_max_uv)", "avg_peak_uv_index")
     )
-
-    #month_weather_df.show(5)
 
     month_year_pd = month_year_weather_df.toPandas() # loaded to pandas to avoid S3A connector
     month_pd = month_weather_df.toPandas() # loaded to pandas to avoid S3A connector

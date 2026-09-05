@@ -18,9 +18,7 @@ def transform_weather_data_to_silver():
 
     for obj in response.get("Contents", []):
         if obj["Key"].endswith(".json"):  # check if the file is a JSON file
-            # print(obj["Key"])  # prints the key of each JSON file in the list
             weather_keys.append(obj["Key"])
-            #print(weather_keys)
         else:
             print(f"Skipping non-JSON file: {obj['Key']}")
 
@@ -29,12 +27,8 @@ def transform_weather_data_to_silver():
             weather_data = json.loads(s3.get_object(Bucket=bucket_name, Key=key)['Body'].read())
             hourly_data = weather_data['hourly']
             city_name = key.split("/")[2]
-            #print(city_name)
-            #print(hourly_data)
             df = pd.DataFrame({
                 "city": city_name,
-                #"country": hourly_data['country'], -- in cities.csv
-                #"country_code": hourly_data['country_code'], -- in cities.csv
                 "date": pd.to_datetime(hourly_data["time"]).date,
                 "temperature_2m": hourly_data["temperature_2m"],
                 "rain": hourly_data["rain"],
@@ -59,7 +53,6 @@ def transform_weather_data_to_silver():
             print(f"Failed to process {key}: {e}")
             continue
 
-    #print (all_daily_dfs)
     silver_weather_df = pd.concat(all_daily_dfs, ignore_index=True)
     silver_weather_df["daily_sunshine_hours"] = silver_weather_df["daily_sunshine_seconds"] / 3600
     silver_weather_df = silver_weather_df.drop_duplicates(subset=["city", "date"], keep="last")
