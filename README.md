@@ -9,11 +9,11 @@ An end-to-end data engineering pipeline that ingests weather, city, and points-o
 ## Architecture Overview
 
 ```
-                 ┌─────────────────┐        ┌──────────────────┐        ┌─────────────────┐
+                 ┌──────────────────┐        ┌───────────────────┐        ┌──────────────────┐
    APIs   ────►  │     BRONZE       │  ───►  │     SILVER        │  ───►  │      GOLD        │
                  │  (raw, untouched)│        │ (cleaned, typed,  │        │ (aggregated,     │
                  │                  │        │  deduplicated)    │        │  business-ready) │
-                 └─────────────────┘        └──────────────────┘        └─────────────────┘
+                 └──────────────────┘        └───────────────────┘        └──────────────────┘
                         S3                          S3                    S3 (star schema)
 ```
 
@@ -23,7 +23,9 @@ An end-to-end data engineering pipeline that ingests weather, city, and points-o
 
 ### Orchestration
 
-The **weather** pipeline is orchestrated end-to-end with **Apache Airflow**, running locally via **Docker Compose**. It runs monthly (5th of each month), fetching the previous complete month and rebuilding the silver/gold layers.
+The **weather** pipeline is orchestrated end-to-end with **Apache Airflow**, running locally via **Docker Compose**. It runs monthly (5th of each month), fetching the previous complete month and rebuilding the silver/gold layers. Below there is a picture with DAG's run history, showing successful scheduled executions.
+
+![Airflow DAG runs](./assets/airflow_dag_run.png)
 
 **Cities** and **activities/points-of-interest** are treated as largely static reference data and are ingested via one-time/manually-triggered scripts rather than a recurring schedule - a deliberate choice reflecting that this data doesn't meaningfully change month to month.
 
@@ -69,7 +71,7 @@ This project has more fact tables than dimensions - a natural consequence of hav
 
 **Hourly-to-daily aggregation choices matter and were revisited.** Cumulative metrics (sunshine duration, rainfall) are summed within a day before being averaged across a month - averaging raw hourly values directly would understate them by diluting them with nighttime zeros. The same issue was initially missed for UV index; it was corrected to take the daily *maximum* (the genuine midday peak) before averaging across the month, rather than a 24-hour mean that is meaningless for a metric that is zero for half of every day.
 
-**PySpark is used for the transformation layer for demonstration purposes.** At this project's actual data volume, pandas would be equally sufficient - Spark's value would scale with more cities or longer history.
+**PySpark is used for the GOLD transformation layer for demonstration purposes.** At this project's actual data volume, pandas would be equally sufficient - Spark's value would scale with more cities or longer history.
 
 ---
 
