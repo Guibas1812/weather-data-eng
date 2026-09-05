@@ -71,7 +71,7 @@ This project has more fact tables than dimensions - a natural consequence of hav
 
 **Hourly-to-daily aggregation choices matter and were revisited.** Cumulative metrics (sunshine duration, rainfall) are summed within a day before being averaged across a month - averaging raw hourly values directly would understate them by diluting them with nighttime zeros. The same issue was initially missed for UV index; it was corrected to take the daily *maximum* (the genuine midday peak) before averaging across the month, rather than a 24-hour mean that is meaningless for a metric that is zero for half of every day.
 
-**PySpark is used for the GOLD transformation layer for demonstration purposes.** At this project's actual data volume, pandas would be equally sufficient - Spark's value would scale with more cities or longer history.
+**PySpark is used for the SILVER -> GOLD transformation layer for demonstration purposes.** At this project's actual data volume, pandas would be equally sufficient - Spark's value would scale with more cities or longer history.
 
 ---
 
