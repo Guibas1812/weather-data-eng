@@ -1,4 +1,4 @@
-# Trip Planner Data Platform
+# Trip Destination Data Pipeline
 
 This project was built to demonstrate practical data engineering skills - ingestion, transformation, orchestration, and data modeling - rather than as a polished analytics product.
 
